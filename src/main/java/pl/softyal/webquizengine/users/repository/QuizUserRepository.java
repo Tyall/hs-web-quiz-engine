@@ -6,6 +6,7 @@ import pl.softyal.webquizengine.users.model.entity.QuizUser;
 import java.util.Optional;
 
 public interface QuizUserRepository extends JpaRepository<QuizUser, Integer> {
+
     Optional<QuizUser> findQuizUserByEmail(String email);
 
     boolean existsByEmail(String email);

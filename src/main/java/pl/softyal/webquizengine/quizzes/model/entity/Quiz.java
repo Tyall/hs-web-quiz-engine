@@ -1,6 +1,9 @@
 package pl.softyal.webquizengine.quizzes.model.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import pl.softyal.webquizengine.users.model.entity.QuizUser;
@@ -8,6 +11,9 @@ import pl.softyal.webquizengine.users.model.entity.QuizUser;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Quiz {
 
     @Id
@@ -29,9 +35,6 @@ public class Quiz {
     @JoinColumn(name = "creator_id")
     private QuizUser creator;
 
-    public Quiz() {
-    }
-
     public Quiz(String title, String text, List<String> options, List<Integer> answer, QuizUser creator) {
         this.title = title;
         this.text = text;
@@ -40,51 +43,7 @@ public class Quiz {
         this.creator = creator;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public List<String> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<String> options) {
-        this.options = options;
-    }
-
-    public List<Integer> getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(List<Integer> answer) {
-        this.answer = answer;
-    }
-
-    public QuizUser getCreator() {
-        return creator;
-    }
-
-    public void setCreator(QuizUser creator) {
-        this.creator = creator;
-    }
 }
+
+
+

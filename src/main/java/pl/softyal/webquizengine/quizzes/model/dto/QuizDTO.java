@@ -4,11 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import pl.softyal.webquizengine.users.model.QuizUserAdapter;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pl.softyal.webquizengine.users.model.entity.QuizUser;
 
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class QuizDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -38,51 +43,4 @@ public class QuizDTO {
         this.creator = creator;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public List<String> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<String> options) {
-        this.options = options;
-    }
-
-    public List<Integer> getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(List<Integer> answer) {
-        this.answer = answer;
-    }
-
-    public QuizUser getCreator() {
-        return creator;
-    }
-
-    public void setCreator(QuizUserAdapter creator) {
-        this.creator = creator.getEntity();
-    }
 }

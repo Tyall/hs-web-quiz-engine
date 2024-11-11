@@ -1,5 +1,6 @@
 package pl.softyal.webquizengine.users.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,6 +14,7 @@ public class QuizUserDetailsServiceImpl implements UserDetailsService {
 
     private final QuizUserRepository repository;
 
+    @Autowired
     public QuizUserDetailsServiceImpl(QuizUserRepository repository) {
         this.repository = repository;
     }

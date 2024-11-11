@@ -28,13 +28,13 @@ public class WebQuizService {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebQuizService.class);
 
-    QuizRepository quizRepository;
+    private final QuizRepository quizRepository;
 
-    CompletionRepository completionRepository;
+    private final CompletionRepository completionRepository;
 
-    QuizMapper quizMapper;
+    private final QuizMapper quizMapper;
 
-    CompletionMapper completionMapper;
+    private final CompletionMapper completionMapper;
 
     @Autowired
     public WebQuizService(QuizRepository quizRepository,
@@ -57,7 +57,7 @@ public class WebQuizService {
 
     public QuizDTO createQuiz(QuizDTO quiz, QuizUserAdapter creator) {
         LOG.info("Trying to create quiz {} by user with email {}", quiz, creator.getUsername());
-        quiz.setCreator(creator);
+        quiz.setCreator(creator.getEntity());
         Quiz savedEntity = quizRepository.save(quizMapper.convertDTOToQuiz(quiz));
         LOG.info("Quiz {} successfully created with id {}", quiz, quiz.getId());
         return quizMapper.convertQuizToDTO(savedEntity);
@@ -71,13 +71,17 @@ public class WebQuizService {
     }
 
     public Result solveQuiz(Long id, Answer answer, QuizUserAdapter user) {
-        Quiz quiz = quizRepository.getById(id);
+        Quiz quiz = quizRepository.getReferenceById(id);
         Result result = null;
+
+        if (quiz == null) {
+            return null;
+        }
 
         LOG.info("Solving quiz of id {} with provided answer {}", id, answer.getAnswer());
 
-        result = new Result();
         boolean status = isAnswerCorrect(quiz, answer);
+        result = new Result();
         result.setSuccess(status);
         result.setFeedback(status ? Result.FEEDBACK_CORRECT : Result.FEEDBACK_WRONG);
 
@@ -99,7 +103,8 @@ public class WebQuizService {
         try {
             return answer.getAnswer().equals(quiz.getAnswer());
         } catch (Exception e) {
-            LOG.error("Exception occurred when trying to check answer of quiz of id {} with provided answer {}", quiz.getId(), answer.getAnswer());
+            LOG.error("Exception occurred when trying to check answer of quiz of id {} with provided answer {}",
+                    (quiz == null || quiz.getId() == null) ? "not_found" : quiz.getId(), answer.getAnswer());
             return false;
         }
     }

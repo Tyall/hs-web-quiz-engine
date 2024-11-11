@@ -18,7 +18,7 @@ import pl.softyal.webquizengine.users.model.QuizUserAdapter;
 @RequestMapping("/api/quizzes")
 public class WebQuizController {
 
-    WebQuizService webQuizService;
+    private final WebQuizService webQuizService;
 
     @Autowired
     public WebQuizController(WebQuizService webQuizService) {
