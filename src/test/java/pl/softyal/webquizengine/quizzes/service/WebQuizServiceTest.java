@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -73,11 +73,12 @@ class WebQuizServiceTest {
 
         Page<QuizDTO> pagedResult = webQuizService.getQuizzes(1);
 
-        assertThat(pagedResult.getNumberOfElements()).isEqualTo(2);
-        assertThat(pagedResult.getPageable().getPageNumber()).isEqualTo(1);
-        assertThat(pagedResult.getPageable().getPageSize()).isEqualTo(2);
-        assertThat(pagedResult.getContent().get(0).getId()).isEqualTo(1);
-        assertThat(pagedResult.getContent().get(1).getId()).isEqualTo(2);
+        assertAll("Grouped assertions of quizzes paginated result",
+                () -> assertEquals(pagedResult.getNumberOfElements(), 2, "Result should have 2 elements"),
+                () -> assertEquals(pagedResult.getPageable().getPageNumber(), 1, "Result should be the first page"),
+                () -> assertEquals(pagedResult.getPageable().getPageSize(), 2, "Result page should have size of 2"),
+                () -> assertEquals(pagedResult.getContent().get(0).getId(), 1, "First element of result's content should have id of 1"),
+                () -> assertEquals(pagedResult.getContent().get(1).getId(), 2, "Second element of result's content should have id of 2"));
     }
 
     @Test
@@ -93,8 +94,9 @@ class WebQuizServiceTest {
 
         QuizDTO createdQuizDTO = webQuizService.createQuiz(newQuiz, userAdapter);
 
-        assertThat(createdQuizDTO.getTitle()).isEqualTo("Sample title");
-        assertThat(createdQuizDTO.getCreator()).isEqualTo(user);
+        assertAll("Grouped assertions of QuizDTO created after saving quiz entity",
+                () -> assertEquals(createdQuizDTO.getTitle(), "Sample title", "Result should have 2 elements"),
+                () -> assertEquals(createdQuizDTO.getCreator(), user, "Result should be the first page"));
     }
 
     @Test
@@ -228,10 +230,11 @@ class WebQuizServiceTest {
 
         Page<CompletionDTO> pagedResult = webQuizService.getCompletions(1, userAdapter);
 
-        assertThat(pagedResult.getNumberOfElements()).isEqualTo(2);
-        assertThat(pagedResult.getPageable().getPageNumber()).isEqualTo(1);
-        assertThat(pagedResult.getPageable().getPageSize()).isEqualTo(2);
-        assertThat(pagedResult.getContent().get(0).getId()).isEqualTo(1);
-        assertThat(pagedResult.getContent().get(1).getId()).isEqualTo(2);
+        assertAll("Grouped assertions of completions paginated result",
+                () -> assertEquals(pagedResult.getNumberOfElements(), 2, "Result should have 2 elements"),
+                () -> assertEquals(pagedResult.getPageable().getPageNumber(), 1, "Result should be the first page"),
+                () -> assertEquals(pagedResult.getPageable().getPageSize(), 2, "Result page should have size of 2"),
+                () -> assertEquals(pagedResult.getContent().get(0).getId(), 1, "First element of result's content should have id of 1"),
+                () -> assertEquals(pagedResult.getContent().get(1).getId(), 2, "Second element of result's content should have id of 2"));
     }
 }
