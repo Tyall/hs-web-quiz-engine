@@ -66,9 +66,8 @@ public class WebQuizController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteQuiz(@PathVariable Long id, @AuthenticationPrincipal QuizUserAdapter user) {
-        HttpStatus status = webQuizService.deleteQuiz(id, user);
-
-        return new ResponseEntity<>(status);
+        webQuizService.deleteQuiz(id, user);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

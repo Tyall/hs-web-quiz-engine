@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pl.softyal.webquizengine.quizzes.model.dto.CompletionDTO;
 import pl.softyal.webquizengine.quizzes.model.entity.Completion;
 
-import java.security.AllPermission;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertAll;

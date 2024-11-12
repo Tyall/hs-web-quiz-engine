@@ -124,7 +124,6 @@ class WebQuizControllerTest {
                 .andExpect(jsonPath("$.pageable.pageSize").value(2))
                 .andExpect(jsonPath("$.content[0].id").value(1))
                 .andExpect(jsonPath("$.content[1].id").value(2));
-        ;
     }
 
     @Test
@@ -132,9 +131,9 @@ class WebQuizControllerTest {
     @DisplayName("POST /api/quizzes creates new quiz and returns 200 OK")
     void createQuiz_returnOk() throws Exception {
         QuizUser user = new QuizUser(1, "test@email.com", "password");
-        QuizDTO newQuiz = new QuizDTO(1L, "Sample title", "Sample text", List.of("A", "B"), user);
-
         QuizUserAdapter userAdapter = new QuizUserAdapter(user);
+
+        QuizDTO newQuiz = new QuizDTO(1L, "Sample title", "Sample text", List.of("A", "B"), user);
 
         Mockito.when(quizRepository.save(Mockito.any(Quiz.class)))
                 .thenReturn(quizMapper.convertDTOToQuiz(newQuiz));
@@ -177,12 +176,10 @@ class WebQuizControllerTest {
     @Test
     @WithMockUser
     @DisplayName("POST /api/quizzes/{id}/solve returns OK and correct answer response")
-    void solveQuiz_quizFoundAnswerCorrect() throws Exception {
+    void solveQuiz_quizFound_answerCorrect() throws Exception {
         Answer answer = new Answer(List.of(1));
 
         QuizUser user = new QuizUser(1, "test@email.com", "password");
-        QuizDTO newQuiz = new QuizDTO(1L, "Sample title", "Sample text", List.of("A", "B"), user);
-
         QuizUserAdapter userAdapter = new QuizUserAdapter(user);
 
         Mockito.when(quizRepository.getReferenceById(Mockito.anyLong()))
@@ -200,7 +197,7 @@ class WebQuizControllerTest {
     @Test
     @WithMockUser
     @DisplayName("POST /api/quizzes/{id}/solve returns OK and incorrect answer response")
-    void solveQuiz_quizFoundAnswerIncorrect() throws Exception {
+    void solveQuiz_quizFound_answerIncorrect() throws Exception {
         Answer answer = new Answer(List.of(2));
 
         Mockito.when(quizRepository.getReferenceById(Mockito.anyLong()))
@@ -232,11 +229,12 @@ class WebQuizControllerTest {
     @DisplayName("DELETE /api/quizzes/{id} successfully deletes and returns NO CONTENT")
     void deleteQuiz_successful() throws Exception {
         QuizUser user = new QuizUser(1, "test@email.com", "password");
+        QuizUserAdapter userAdapter = new QuizUserAdapter(user);
+
         Quiz quiz = new Quiz("Sample title", "Sample text", List.of("A", "B"), List.of(1), user);
 
         Mockito.when(quizRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(quiz));
 
-        QuizUserAdapter userAdapter = new QuizUserAdapter(user);
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/quizzes/1")
                         .with(user(userAdapter)))
                 .andExpect(status().isNoContent());
@@ -247,12 +245,14 @@ class WebQuizControllerTest {
     @DisplayName("DELETE /api/quizzes/{id} not as quiz owner and returns FORBIDDEN")
     void deleteQuiz_forbiddenAccess() throws Exception {
         QuizUser creator = new QuizUser(1, "test-creator@email.com", "password");
+
         QuizUser accessingUser = new QuizUser(2, "test-accessing@email.com", "password");
+        QuizUserAdapter userAdapter = new QuizUserAdapter(accessingUser);
+
         Quiz quiz = new Quiz("Sample title", "Sample text", List.of("A", "B"), List.of(1), creator);
 
         Mockito.when(quizRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(quiz));
 
-        QuizUserAdapter userAdapter = new QuizUserAdapter(accessingUser);
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/quizzes/1")
                         .with(user(userAdapter)))
                 .andExpect(status().isForbidden());
@@ -263,10 +263,10 @@ class WebQuizControllerTest {
     @DisplayName("DELETE /api/quizzes/{id} not existing quiz and returns NOT FOUND")
     void deleteQuiz_quizNotFound() throws Exception {
         QuizUser user = new QuizUser(1, "test@email.com", "password");
+        QuizUserAdapter userAdapter = new QuizUserAdapter(user);
 
         Mockito.when(quizRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
 
-        QuizUserAdapter userAdapter = new QuizUserAdapter(user);
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/quizzes/1")
                         .with(user(userAdapter)))
                 .andExpect(status().isNotFound());

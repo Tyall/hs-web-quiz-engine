@@ -6,8 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import pl.softyal.webquizengine.quizzes.exception.QuizDeletionForbiddenException;
+import pl.softyal.webquizengine.quizzes.exception.QuizNotFoundException;
 import pl.softyal.webquizengine.quizzes.model.Answer;
 import pl.softyal.webquizengine.quizzes.model.Result;
 import pl.softyal.webquizengine.quizzes.model.dto.CompletionDTO;
@@ -95,7 +96,7 @@ public class WebQuizService {
     }
 
     private void addNewCompletion(Long quizId, Integer userId) {
-        Completion completion  = new Completion(userId, quizId, LocalDateTime.now());
+        Completion completion = new Completion(userId, quizId, LocalDateTime.now());
         completionRepository.save(completion);
     }
 
@@ -109,23 +110,20 @@ public class WebQuizService {
         }
     }
 
-    public HttpStatus deleteQuiz(Long id, QuizUserAdapter currentUser) {
+    public void deleteQuiz(Long id, QuizUserAdapter currentUser) {
         QuizDTO quiz = getQuizById(id);
 
         LOG.info("Attempting to delete quiz with id {}, quiz is {}", id, quiz);
 
         if (quiz == null) {
             LOG.warn("Quiz with id {} not found", id);
-            return HttpStatus.NOT_FOUND;
+            throw new QuizNotFoundException();
         } else if (!Objects.equals(quiz.getCreator().getEmail(), currentUser.getUsername())) {
             LOG.warn("Attempting to delete other user's quiz with id {}. Current user email {}, quiz user email {}", id, currentUser.getUsername(), quiz.getCreator().getEmail());
-            return HttpStatus.FORBIDDEN;
+            throw new QuizDeletionForbiddenException();
         } else {
             quizRepository.deleteById(id);
-
             LOG.info("Successfully deleted quiz with id {}", id);
-
-            return HttpStatus.NO_CONTENT;
         }
     }
 
